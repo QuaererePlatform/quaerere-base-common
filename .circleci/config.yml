@@ -70,7 +70,7 @@ jobs:
           command: |
             . venv/bin/activate
             python3 setup.py --version
-            bumpversion -m "Bump version: {current_version} → {new_version} [ci skip]" --no-tag dev_num
+            bumpversion --commit -m "Bump version: {current_version} → {new_version} [ci skip]" --no-tag dev_num
             python3 setup.py --version
 
   release_dev_pypi:
