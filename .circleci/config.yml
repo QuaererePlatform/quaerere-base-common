@@ -68,6 +68,8 @@ jobs:
       - run:
           name: Bumpversion dev
           command: |
+            git config --global user.email "git-robot@virtualxistenz.com"
+            git config --global user.name "Git Robot"
             . venv/bin/activate
             python3 setup.py --version
             bumpversion --commit -m "Bump version: {current_version} → {new_version} [ci skip]" --no-tag dev_num
