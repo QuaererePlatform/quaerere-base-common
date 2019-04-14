@@ -8,8 +8,6 @@ from setuptools import find_packages, setup
 from setuptools.command.install import install
 
 PROJECT_NAME = 'quaerere-base-common'
-PROJECT_RELEASE = '0.1.0.dev0'
-PROJECT_VERSION = '.'.join(PROJECT_RELEASE.split('.')[:2])
 INSTALL_REQUIRES = [
     'marshmallow>=2.19.0,<3', ]
 SETUP_REQUIRES = [
@@ -24,9 +22,18 @@ TESTS_REQUIRES = [
     'pytest-flake8', ]
 
 
+def get_version():
+    with open('VERSION') as f:
+        return f.readline().strip()
+
+
 def readme():
     with open('README.rst') as f:
         return f.read()
+
+
+PROJECT_RELEASE = get_version()
+PROJECT_VERSION = '.'.join(PROJECT_RELEASE.split('.')[:2])
 
 
 # Taken from https://circleci.com/blog/continuously-deploying-python-\
