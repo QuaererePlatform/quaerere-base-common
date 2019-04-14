@@ -1,0 +1,128 @@
+version: 2.1
+
+jobs:
+
+  deps_py37:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      - run:
+          name: Install python dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip3 install -U -r requirements.txt
+      - save_cache:
+          key: v1-dependency-cache-{{ .Branch }}-{{ checksum "requirements.txt" }}-py37
+          paths:
+            - "venv"
+
+  test_py37:
+    docker:
+      - image: circleci/python:3.7
+    environment:
+      PYTEST_ADDOPTS: --cov-report=xml:test-reports/coverage.xml --junitxml=test-reports/junit.xml
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ .Branch }}-{{ checksum "requirements.txt" }}-py37
+      - run:
+          name: Run tests
+          command: |
+            . venv/bin/activate
+            python3 setup.py test
+      - store_test_results:
+          path: test-reports
+      - store_artifacts:
+          path: test-reports
+      - run:
+          name: Smoke Test Install
+          command: |
+            . venv/bin/activate
+            python3 --version
+            python3 setup.py install
+
+  bump_version_dev:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "0e:5c:a0:02:81:76:1b:4d:9b:38:bc:2e:0c:ff:7e:69"
+      - checkout
+      - restore_cache:
+          key: v1-bumpversion
+      - run:
+          name: Install/Upgrade bumpversion
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip3 install -U bumpversion
+      - save_cache:
+          key: v1-bumpversion
+          paths:
+            - "venv"
+      - run:
+          name: Bumpversion dev
+          command: |
+            . venv/bin/activate
+            python3 setup.py --version
+            bumpversion --no-tag dev_num
+            python3 setup.py --version
+
+  release_dev_pypi:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-release-{{ .Branch }}-{{ checksum "requirements.txt" }}
+            - v1-dependency-cache-{{ .Branch }}-{{ checksum "requirements.txt" }}-py37
+      - run:
+          name: Install/Upgrade release requirements
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip3 install -U -r requirements.txt
+            pip3 install -U twine
+      - save_cache:
+          key: v1-release-{{ .Branch }}-{{ checksum "requirements.txt" }}
+          paths:
+            - "venv"
+      - run:
+          name:
+      - run:
+          name:
+          command: |
+            . venv/bin/activate
+            export TWINE_USERNAME=$TEST_PYPI_USERNAME
+            export TWINE_PASSWORD=$TEST_PYPI_PASSWORD
+            python3 setup.py sdist
+            python3 setup.py bdist_wheel
+            twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
+workflows:
+  version: 2
+
+  build_test_release_py37:
+    jobs:
+      - deps_py37:
+          filters:
+            tags:
+              only: /.*/
+      - test_py37:
+          requires:
+            - deps_py37
+          filters:
+            tags:
+              only: /.*/
+      - bump_version_dev:
+          requires:
+            - test_py37
+          filters:
+            branches:
+              only: develop
