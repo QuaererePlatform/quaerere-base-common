@@ -78,7 +78,7 @@ jobs:
       - run:
           name: Push version bump
           command: |
-            echo "git push -u origin develop"
+            git push -u origin develop
 
   release_pypi_dev:
     docker:
@@ -130,6 +130,13 @@ workflows:
       - bump_version_dev:
           requires:
             - test_py37
+          filters:
+            branches:
+              only: develop
+      - release_pypi_dev:
+          context: PyPI
+          requires:
+            - bump_version_dev
           filters:
             branches:
               only: develop
