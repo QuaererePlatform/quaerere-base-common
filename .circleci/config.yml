@@ -74,8 +74,13 @@ jobs:
             python3 setup.py --version
             bumpversion --commit -m "Bump version: {current_version} → {new_version} [ci skip]" --no-tag dev_num
             python3 setup.py --version
+            git log -n 1
+      - run:
+          name: Push version bump
+          command: |
+            echo "git push -u origin develop"
 
-  release_dev_pypi:
+  release_pypi_dev:
     docker:
       - image: circleci/python:3.7
     steps:
