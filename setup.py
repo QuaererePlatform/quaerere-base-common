@@ -12,7 +12,7 @@ INSTALL_REQUIRES = [
     'marshmallow>=2.19.0,<3', ]
 SETUP_REQUIRES = [
     'pytest-runner',
-    'Sphinx>=2.0.0',
+    'Sphinx>=1.8.0,<2',
     'sphinx-rtd-theme',
     'setuptools',
     'wheel', ]

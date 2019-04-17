@@ -1,7 +1,7 @@
 # Generated file, do not edit
 marshmallow>=2.19.0,<3
 pytest-runner
-Sphinx>=1.8.0
+Sphinx>=1.8.0,<2
 sphinx-rtd-theme
 setuptools
 wheel
