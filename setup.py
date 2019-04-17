@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-"""
+"""Setup for quaerere-base-common
 """
 import os
 import sys
 
-from setuptools import find_packages, setup
+from setuptools import setup
 from setuptools.command.install import install
 
 PROJECT_NAME = 'quaerere-base-common'
@@ -12,7 +12,7 @@ INSTALL_REQUIRES = [
     'marshmallow>=2.19.0,<3', ]
 SETUP_REQUIRES = [
     'pytest-runner',
-    'Sphinx>=1.8.0',
+    'Sphinx>=2.0.0',
     'sphinx-rtd-theme',
     'setuptools',
     'wheel', ]
@@ -25,11 +25,6 @@ TESTS_REQUIRES = [
 def get_version():
     with open('VERSION') as f:
         return f.readline().strip()
-
-
-def readme():
-    with open('README.rst') as f:
-        return f.read()
 
 
 PROJECT_RELEASE = get_version()
@@ -66,12 +61,7 @@ class WriteRequirementsCommand(install):
 
 setup(name=PROJECT_NAME,
       version=PROJECT_RELEASE,
-      description='',
-      long_description=readme(),
-      packages=find_packages(exclude=['docs', 'tests']),
-      zip_safe=False,
       test_suite='tests',
-      python_requires='~=3.6',
       install_requires=INSTALL_REQUIRES,
       setup_requires=SETUP_REQUIRES,
       tests_require=TESTS_REQUIRES,
