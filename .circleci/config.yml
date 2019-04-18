@@ -42,6 +42,10 @@ commands:
 
   publish:
     description: "Uses twine to publish packages to PyPI"
+    parameters:
+      verify_tag:
+        type: boolean
+        default: false
     steps:
       - restore_cache:
           keys:
@@ -58,13 +62,16 @@ commands:
           key: v1-release-{{ .Branch }}-{{ checksum "requirements.txt" }}
           paths:
             - "venv"
+      - when:
+          condition: << parameters.verify_tag >>
+          steps:
+            - run:
+                name: Verify git tag vs. package version
+                command: |
+                  . venv/bin/activate
+                  python setup.py verify
       - run:
-          name: Verify git tag vs. package version
-          command: |
-            . venv/bin/activate
-            python setup.py verify
-      - run:
-          name: Publish to Prod PyPI
+          name: Publish to PyPI
           command: |
             . venv/bin/activate
             python3 setup.py sdist
@@ -147,7 +154,8 @@ jobs:
       - image: circleci/python:3.7
     steps:
       - checkout
-      - publish
+      - publish:
+          verify_tag: true
 
 workflows:
   version: 2
