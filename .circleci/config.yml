@@ -185,7 +185,7 @@ workflows:
             - unittest_py37
           filters:
             branches:
-              only: /^release\//
+              only: /^release\/.*/
       - publish_prod_tag:
           context: Prod PyPI
           requires:
