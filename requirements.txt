@@ -4,7 +4,6 @@ pytest-runner
 Sphinx>=1.8.0,<2
 sphinx-rtd-theme
 setuptools
-wheel
 pytest>=4.2.0
 pytest-cov>=2.6.0
 pytest-flake8

@@ -14,8 +14,7 @@ SETUP_REQUIRES = [
     'pytest-runner',
     'Sphinx>=1.8.0,<2',
     'sphinx-rtd-theme',
-    'setuptools',
-    'wheel', ]
+    'setuptools', ]
 TESTS_REQUIRES = [
     'pytest>=4.2.0',
     'pytest-cov>=2.6.0',

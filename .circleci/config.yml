@@ -7,7 +7,7 @@ commands:
     parameters:
       version_part:
         type: enum
-        enum: ['major', 'minor', 'patch', 'pre_release', 'pre_release_num', 'dev_num']
+        enum: ['major', 'minor', 'patch', 'pre_release', 'pre_release_num']
       bump_options:
         type: string
         default: '--no-tag --commit -m "Bump version: {current_version} → {new_version} [ci skip]"'
@@ -25,7 +25,7 @@ commands:
           paths:
             - "venv"
       - run:
-          name: Bumpversion dev
+          name: Bumpversion
           command: |
             git config --global user.email "git-robot@virtualxistenz.com"
             git config --global user.name "Git Robot"
@@ -57,6 +57,7 @@ commands:
             python3 -m venv venv
             . venv/bin/activate
             pip3 install -U -r requirements.txt
+            pip3 install -U wheel
             pip3 install -U twine
       - save_cache:
           key: v1-release-{{ .Branch }}-{{ checksum "requirements.txt" }}
@@ -129,25 +130,19 @@ jobs:
     environment:
       TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "04:9e:4c:45:49:63:80:3b:5c:b4:ee:9e:36:5c:2a:ea"
       - checkout
-      - bumpversion:
-          version_part: dev_num
       - publish
+      - bumpversion:
+          version_part: pre_release_num
 
   bump_publish_release:
     docker:
       - image: circleci/python:3.7
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "04:9e:4c:45:49:63:80:3b:5c:b4:ee:9e:36:5c:2a:ea"
       - checkout
+      - publish
       - bumpversion:
           version_part: pre_release_num
-      - publish
 
   publish_prod_tag:
     docker:
