@@ -9,10 +9,10 @@ from setuptools.command.install import install
 
 PROJECT_NAME = 'quaerere-base-common'
 INSTALL_REQUIRES = [
-    'marshmallow>=2.16.0,<3', ]
+    'marshmallow<3,>=2.16.0', ]
 SETUP_REQUIRES = [
     'pytest-runner',
-    'Sphinx>=1.8.0,<2',
+    'Sphinx<2,>=1.8.0',
     'sphinx-rtd-theme',
     'setuptools', ]
 TESTS_REQUIRES = [
